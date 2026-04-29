@@ -1,0 +1,480 @@
+
+<style>
+  h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+
+  .wrap { padding: 1.5rem 0; }
+
+  .phase-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 1rem; cursor: pointer; user-select: none;
+  }
+  .phase-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 500; flex-shrink: 0;
+  }
+  .phase-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); flex: 1; }
+  .phase-badge {
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+  }
+  .chevron { font-size: 14px; color: var(--color-text-secondary); transition: transform 0.2s; }
+  .phase-body { margin-left: 48px; margin-bottom: 1.5rem; display: none; }
+  .phase-body.open { display: block; }
+
+  .step-card {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 1rem 1.25rem;
+    margin-bottom: 10px;
+  }
+  .step-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+  .step-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.7; }
+  .step-tip {
+    margin-top: 8px; padding: 8px 12px;
+    background: var(--color-background-primary);
+    border-left: 3px solid #1D9E75;
+    border-radius: 0 6px 6px 0;
+    font-size: 12px; color: var(--color-text-secondary); line-height: 1.6;
+  }
+  .step-tip b { color: var(--color-text-primary); font-weight: 500; }
+
+  .progress-bar-wrap { margin-bottom: 1.5rem; }
+  .progress-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; }
+  .progress-bar { height: 6px; background: var(--color-background-secondary); border-radius: 3px; }
+  .progress-fill { height: 6px; border-radius: 3px; background: #1D9E75; width: 0%; transition: width 0.4s; }
+
+  .todo-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .todo-row:last-child { border-bottom: none; }
+  .todo-check { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--color-border-secondary); flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+  .todo-check.done { background: #1D9E75; border-color: #1D9E75; }
+  .todo-check.done::after { content: ''; display: block; width: 5px; height: 9px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(40deg) translateY(-1px); }
+  .todo-text { font-size: 13px; color: var(--color-text-primary); line-height: 1.5; }
+  .todo-text.done-text { text-decoration: line-through; color: var(--color-text-secondary); }
+  .todo-tag { font-size: 11px; padding: 2px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
+
+  .section-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); margin: 1.5rem 0 0.75rem; }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab { font-size: 13px; padding: 6px 14px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); cursor: pointer; }
+  .tab.active { background: var(--color-text-primary); color: var(--color-background-primary); border-color: var(--color-text-primary); }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Tutorial passo a passo para fazer o case técnico da Dadosfera, do zero, para iniciantes.</h2>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('guia')">Guia passo a passo</button>
+    <button class="tab" onclick="switchTab('checklist')">Checklist de tarefas</button>
+  </div>
+
+  <div id="tab-guia" class="tab-pane active">
+
+    <div class="progress-bar-wrap">
+      <div class="progress-label" id="prog-label">0 de 10 etapas abertas</div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+    </div>
+
+    <!-- FASE 0 -->
+    <div class="phase-header" onclick="togglePhase(0)">
+      <div class="phase-num" style="background:#E1F5EE;color:#0F6E56;">0</div>
+      <div class="phase-title">Antes de tudo — criar contas</div>
+      <span class="phase-badge" style="background:#E1F5EE;color:#0F6E56;">Comece aqui</span>
+      <span class="chevron" id="chev0">&#9660;</span>
+    </div>
+    <div class="phase-body" id="body0">
+      <div class="step-card">
+        <div class="step-title">Criar conta no Google (se ainda não tiver)</div>
+        <div class="step-body">Vá em <b>google.com</b>, clique em "Fazer login" no canto superior direito, depois em "Criar conta". Preencha nome, e-mail e senha. Guarde esse e-mail — vai usar em tudo.</div>
+        <div class="step-tip"><b>O que é isso?</b> O Google te dá ferramentas gratuitas: Gmail, Drive, Colab. Você vai usar tudo no projeto.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Criar conta no GitHub</div>
+        <div class="step-body">Vá em <b>github.com</b>, clique em "Sign up". Coloque seu e-mail, crie uma senha, escolha um nome de usuário. Confirme pelo e-mail que chegar.</div>
+        <div class="step-tip"><b>O que é o GitHub?</b> É um lugar na internet onde você guarda e organiza seus arquivos de projeto. É tipo uma pasta online que todo mundo pode ver.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Criar conta no Kaggle</div>
+        <div class="step-body">Vá em <b>kaggle.com</b>, clique em "Register". Pode entrar com a conta do Google (mais fácil). Depois vá em seu perfil → "Account" → "Create New API Token" e salve o arquivo <b>kaggle.json</b> que baixar.</div>
+        <div class="step-tip"><b>O que é o Kaggle?</b> É um site com tabelas de dados gratuitas pra baixar e usar em projetos. É de onde você vai pegar os dados do seu projeto.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Criar conta na Dadosfera</div>
+        <div class="step-body">O link de acesso vai chegar no e-mail que você usou pra se candidatar à vaga. Procure um e-mail de <b>suporte@dadosfera.ai</b> com assunto "Acesse a Dadosfera | Registro". Clique em "Primeiro acesso".</div>
+        <div class="step-tip"><b>O que é a Dadosfera?</b> É a plataforma da empresa onde você vai subir e organizar seus dados. É onde os avaliadores vão ver seu trabalho.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Criar conta no Streamlit Community Cloud</div>
+        <div class="step-body">Vá em <b>streamlit.io</b>, clique em "Sign up". Pode entrar com sua conta do Google ou do GitHub. Confirme pelo e-mail.</div>
+        <div class="step-tip"><b>O que é o Streamlit?</b> É onde você vai publicar seu "appzinho" de dados na internet, para qualquer pessoa acessar pelo link.</div>
+      </div>
+      <button onclick="sendPrompt('Preciso de ajuda pra criar minha conta no GitHub, pode me guiar?')" style="margin-top:8px;font-size:13px;padding:7px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;">Preciso de ajuda com uma conta ↗</button>
+    </div>
+
+    <!-- FASE 1 -->
+    <div class="phase-header" onclick="togglePhase(1)">
+      <div class="phase-num" style="background:#E6F1FB;color:#185FA5;">1</div>
+      <div class="phase-title">Criar repositório no GitHub</div>
+      <span class="phase-badge" style="background:#E6F1FB;color:#185FA5;">Entrega obrigatória</span>
+      <span class="chevron" id="chev1">&#9660;</span>
+    </div>
+    <div class="phase-body" id="body1">
+      <div class="step-card">
+        <div class="step-title">Passo 1 — Entrar no GitHub e clicar em "New repository"</div>
+        <div class="step-body">Entre em <b>github.com</b> com sua conta. No canto superior direito aparece um sinal de "+" (mais). Clique nele e depois em "New repository".</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Passo 2 — Dar o nome certo ao repositório</div>
+        <div class="step-body">No campo "Repository name", escreva exatamente assim (substituindo pelo seu nome):<br><br><b>SEUNOME_SEUSOBRENOME_DDF_TECH_042026</b><br><br>Exemplo: MARIA_SETE_DDF_TECH_042026</div>
+        <div class="step-tip"><b>Atenção:</b> tudo em letras maiúsculas, separado por underline (_), sem espaços.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Passo 3 — Configurar e criar</div>
+        <div class="step-body">Deixe marcado "Public" (público). Marque a caixinha "Add a README file". Clique no botão verde "Create repository".</div>
+        <div class="step-tip"><b>O que é um README?</b> É um arquivo de texto que aparece na página do seu projeto. Funciona como uma capa: explica o que você fez, coloca links, fotos e instruções.</div>
+      </div>
+    </div>
+
+    <!-- FASE 2 -->
+    <div class="phase-header" onclick="togglePhase(2)">
+      <div class="phase-num" style="background:#FAEEDA;color:#854F0B;">2</div>
+      <div class="phase-title">Item 0 — Planejamento (o mapa do projeto)</div>
+      <span class="phase-badge" style="background:#FAEEDA;color:#854F0B;">Item 0</span>
+      <span class="chevron" id="chev2">&#9660;</span>
+    </div>
+    <div class="phase-body" id="body2">
+      <div class="step-card">
+        <div class="step-title">O que você precisa fazer aqui</div>
+        <div class="step-body">Criar uma imagem ou diagrama mostrando todas as etapas do projeto. Pense nisso como um mapa de tudo que você vai fazer, do começo ao fim.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Como fazer (do jeito mais fácil)</div>
+        <div class="step-body">Vá em <b>canva.com</b> (gratuito), crie uma conta, escolha um modelo de "Fluxograma" ou "Kanban". Coloque as etapas: Planejamento → Dados → Limpeza → Análise → Dashboard → App → Vídeo → Entrega.</div>
+        <div class="step-tip"><b>Dica:</b> No Canva você arrasta e solta caixinhas prontas. Não precisa saber desenhar nada. Quando terminar, clique em "Baixar" e salve como PNG (imagem).</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Como colocar essa imagem no GitHub</div>
+        <div class="step-body">Entre no seu repositório no GitHub. Clique em "Add file" → "Upload files". Arraste a imagem que você baixou do Canva. Depois clique em "Commit changes" (botão verde).</div>
+      </div>
+      <button onclick="sendPrompt('Me ajuda a criar um fluxograma simples de planejamento de projeto para o case?')" style="margin-top:8px;font-size:13px;padding:7px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;">Criar fluxograma agora ↗</button>
+    </div>
+
+    <!-- FASE 3 -->
+    <div class="phase-header" onclick="togglePhase(3)">
+      <div class="phase-num" style="background:#E1F5EE;color:#0F6E56;">3</div>
+      <div class="phase-title">Item 1 — Pegar os dados (o dataset)</div>
+      <span class="phase-badge" style="background:#E1F5EE;color:#0F6E56;">Item 1</span>
+      <span class="chevron" id="chev3">&#9660;</span>
+    </div>
+    <div class="phase-body" id="body3">
+      <div class="step-card">
+        <div class="step-title">O que é um "dataset"?</div>
+        <div class="step-body">Dataset é simplesmente uma tabela com muitas linhas de dados. Como uma planilha Excel gigante. O projeto exige que tenha mais de 100.000 linhas.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Qual dataset usar (recomendação)</div>
+        <div class="step-body">Use o dataset Olist — são dados reais de um e-commerce brasileiro. Acesse: <b>kaggle.com/datasets/olistbr/brazilian-ecommerce</b> e clique em "Download" (vai pedir login no Kaggle).</div>
+        <div class="step-tip"><b>O que tem nele?</b> Pedidos, produtos, clientes, pagamentos, avaliações. Mais de 100 mil pedidos reais. Perfeito pro projeto.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Onde guardar o arquivo baixado</div>
+        <div class="step-body">Vai baixar um arquivo .zip. Deixa ele na pasta Downloads do seu computador por enquanto. Na próxima etapa você vai enviar ele para o Google Colab (a nuvem).</div>
+      </div>
+    </div>
+
+    <!-- FASE 4 -->
+    <div class="phase-header" onclick="togglePhase(4)">
+      <div class="phase-num" style="background:#E6F1FB;color:#185FA5;">4</div>
+      <div class="phase-title">Item 2 — Google Colab (abrir e usar)</div>
+      <span class="phase-badge" style="background:#E6F1FB;color:#185FA5;">Item 2</span>
+      <span class="chevron" id="chev4">&#9660;</span>
+    </div>
+    <div class="phase-body" id="body4">
+      <div class="step-card">
+        <div class="step-title">O que é o Google Colab?</div>
+        <div class="step-body">É uma página do Google onde você escreve e roda código Python direto no navegador. Não precisa instalar nada no computador. É de graça e funciona como um caderno de anotações + calculadora ao mesmo tempo.</div>
+        <div class="step-tip"><b>Comparação simples:</b> é como o Google Docs, mas em vez de escrever texto, você escreve código. E quando aperta o botão play ▶, o código roda.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Passo 1 — Abrir o Colab</div>
+        <div class="step-body">Vá em <b>colab.research.google.com</b> no navegador. Vai aparecer uma janela. Clique em "Novo notebook".</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Passo 2 — Entender a tela</div>
+        <div class="step-body">Você vai ver uma área cinza chamada "célula". É lá que você cola os códigos. Cada vez que quiser rodar um código, clica no botão ▶ à esquerda da célula (ou aperta Ctrl+Enter no teclado).</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Passo 3 — Subir os dados do dataset</div>
+        <div class="step-body">No menu lateral esquerdo do Colab, clique no ícone de pasta (📁). Depois clique em "Upload" (seta para cima). Selecione os arquivos .csv que estavam dentro do zip do Kaggle que você baixou.</div>
+        <div class="step-tip"><b>Atenção:</b> os arquivos somem quando você fecha o Colab. Isso é normal. Você vai subir de novo se precisar. Depois vamos guardar tudo no Google Drive para não perder.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Passo 4 — Primeiro código (só pra testar)</div>
+        <div class="step-body">Clique na célula cinza e cole esse código exatamente assim:<br><br><code>import pandas as pd<br>df = pd.read_csv("olist_orders_dataset.csv")<br>df.head()</code><br><br>Depois clique ▶. Se aparecer uma tabela, funcionou!</div>
+        <div class="step-tip"><b>O que esse código faz?</b> Ele abre o arquivo CSV (que é sua tabela de dados) e mostra as 5 primeiras linhas. É só um teste pra ver se tudo carregou certo.</div>
+      </div>
+      <button onclick="sendPrompt('Me dá um código completo para o Google Colab carregar e explorar o dataset Olist do Kaggle do zero?')" style="margin-top:8px;font-size:13px;padding:7px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;">Gerar código completo pra Colab ↗</button>
+    </div>
+
+    <!-- FASE 5 -->
+    <div class="phase-header" onclick="togglePhase(5)">
+      <div class="phase-num" style="background:#FAECE7;color:#993C1D;">5</div>
+      <div class="phase-title">Item 2 — Subir dados na Dadosfera</div>
+      <span class="phase-badge" style="background:#FAECE7;color:#993C1D;">Item 2 obrigatório</span>
+      <span class="chevron" id="chev5">&#9660;</span>
+    </div>
+    <div class="phase-body" id="body5">
+      <div class="step-card">
+        <div class="step-title">O que é "subir dados na Dadosfera"?</div>
+        <div class="step-body">É enviar sua tabela de dados para dentro da plataforma da empresa. Depois disso, você consegue fazer análises, gráficos e tudo mais por lá. É como importar uma planilha, mas numa ferramenta profissional.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Passo 1 — Entrar na Dadosfera</div>
+        <div class="step-body">Acesse o link que chegou no seu e-mail (de suporte@dadosfera.ai). Entre com seu usuário e senha. Você vai ver o painel principal da plataforma.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Passo 2 — Ir para o módulo "Coleta"</div>
+        <div class="step-body">No menu lateral esquerdo, procure por "Coletar" ou "Integrar". É por ali que você vai importar seus dados.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Passo 3 — Criar nova conexão com arquivo CSV</div>
+        <div class="step-body">Clique em "Nova conexão" ou "Adicionar fonte de dados". Escolha a opção de arquivo CSV/planilha. Faça o upload do arquivo que você tem no seu computador.</div>
+        <div class="step-tip"><b>Lembre-se:</b> o arquivo tem que ter mais de 100.000 linhas. O dataset Olist tem isso, então fica tranquila.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Passo 4 — Tirar print da tela</div>
+        <div class="step-body">Quando os dados carregarem, tire um print da tela mostrando a tabela carregada. No Windows: aperta a tecla "Print Screen" ou use a ferramenta de recorte (Win+Shift+S). Guarde essa imagem, vai usar no README.</div>
+      </div>
+    </div>
+
+    <!-- FASE 6 -->
+    <div class="phase-header" onclick="togglePhase(6)">
+      <div class="phase-num" style="background:#E1F5EE;color:#0F6E56;">6</div>
+      <div class="phase-title">Item 3 e 4 — Organizar e verificar qualidade</div>
+      <span class="phase-badge" style="background:#E1F5EE;color:#0F6E56;">Item 3 e 4 obrigatórios</span>
+      <span class="chevron" id="chev6">&#9660;</span>
+    </div>
+    <div class="phase-body" id="body6">
+      <div class="step-card">
+        <div class="step-title">Item 3 — Criar o dicionário de dados</div>
+        <div class="step-body">É uma tabela explicando o que significa cada coluna. Por exemplo: "order_id = número do pedido", "customer_id = número do cliente", etc. Você faz isso numa tabela simples no README.</div>
+        <div class="step-tip"><b>Pra que serve?</b> Para qualquer pessoa que olhar seu projeto entender o que cada dado significa, sem precisar adivinhar.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Item 4 — Relatório de qualidade dos dados (no Colab)</div>
+        <div class="step-body">Você vai rodar um código no Google Colab que analisa se tem dados faltando, erros, inconsistências. Cole essa célula no Colab e rode:</div>
+        <div class="step-tip"><b>Código simples de qualidade:</b><br><code>print(df.isnull().sum())</code><br>Isso mostra quantos valores estão faltando em cada coluna. Tire um print do resultado.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Salvar o notebook do Colab</div>
+        <div class="step-body">No Colab, vá em "Arquivo" → "Salvar cópia no Drive". Isso guarda o notebook no seu Google Drive. Depois você pode compartilhar o link dele.</div>
+      </div>
+      <button onclick="sendPrompt('Me dá o código completo de relatório de qualidade de dados com great_expectations no Colab usando o dataset Olist?')" style="margin-top:8px;font-size:13px;padding:7px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;">Gerar código de qualidade ↗</button>
+    </div>
+
+    <!-- FASE 7 -->
+    <div class="phase-header" onclick="togglePhase(7)">
+      <div class="phase-num" style="background:#E6F1FB;color:#185FA5;">7</div>
+      <div class="phase-title">Item 7 — Dashboard (gráficos)</div>
+      <span class="phase-badge" style="background:#E6F1FB;color:#185FA5;">Item 7 obrigatório</span>
+      <span class="chevron" id="chev7">&#9660;</span>
+    </div>
+    <div class="phase-body" id="body7">
+      <div class="step-card">
+        <div class="step-title">O que é um dashboard?</div>
+        <div class="step-body">É uma página com vários gráficos que mostram os dados de forma visual. Tipo um painel de controle. Você precisa fazer 5 gráficos diferentes.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Onde fazer os gráficos</div>
+        <div class="step-body">Você vai fazer os gráficos na Dadosfera, no módulo de Visualização (que usa o Metabase). Procure no menu lateral o ícone de gráfico ou "Visualizar".</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">5 gráficos sugeridos (prontos pra usar)</div>
+        <div class="step-body">
+          1. Gráfico de barras — vendas por categoria de produto<br>
+          2. Gráfico de linha — número de pedidos por mês<br>
+          3. Gráfico de pizza — forma de pagamento mais usada<br>
+          4. Tabela — top 10 produtos mais vendidos<br>
+          5. Mapa ou gráfico de barras — pedidos por estado do Brasil
+        </div>
+        <div class="step-tip"><b>Tire prints de cada gráfico</b> para colocar no README depois.</div>
+      </div>
+    </div>
+
+    <!-- FASE 8 -->
+    <div class="phase-header" onclick="togglePhase(8)">
+      <div class="phase-num" style="background:#FAEEDA;color:#854F0B;">8</div>
+      <div class="phase-title">Item 9 — Criar o App no Streamlit</div>
+      <span class="phase-badge" style="background:#FAEEDA;color:#854F0B;">Item 9</span>
+      <span class="chevron" id="chev8">&#9660;</span>
+    </div>
+    <div class="phase-body" id="body8">
+      <div class="step-card">
+        <div class="step-title">O que é o Streamlit?</div>
+        <div class="step-body">É uma ferramenta que transforma código Python num site interativo. Você escreve o código no Colab, copia para um arquivo, sobe no GitHub, e o Streamlit publica na internet automaticamente.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Passo 1 — Criar o arquivo app.py no GitHub</div>
+        <div class="step-body">No seu repositório do GitHub, clique em "Add file" → "Create new file". Dê o nome <b>app.py</b>. Cole o código do app (posso gerar pra você).</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Passo 2 — Criar arquivo requirements.txt</div>
+        <div class="step-body">Crie outro arquivo chamado <b>requirements.txt</b> com o conteúdo:<br><br><code>streamlit<br>pandas<br>plotly</code><br><br>Esse arquivo diz pro Streamlit quais ferramentas instalar.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Passo 3 — Publicar no Streamlit Cloud</div>
+        <div class="step-body">Entre em <b>share.streamlit.io</b>. Clique em "New app". Conecte sua conta do GitHub. Selecione seu repositório e o arquivo app.py. Clique em "Deploy". Em alguns minutos seu app estará no ar com um link!</div>
+      </div>
+      <button onclick="sendPrompt('Me gera um código app.py completo no Streamlit pra explorar o dataset Olist com filtros e gráficos, para iniciante?')" style="margin-top:8px;font-size:13px;padding:7px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;">Gerar código do app agora ↗</button>
+    </div>
+
+    <!-- FASE 9 -->
+    <div class="phase-header" onclick="togglePhase(9)">
+      <div class="phase-num" style="background:#EEEDFE;color:#534AB7;">9</div>
+      <div class="phase-title">Item 10 — Gravar o vídeo</div>
+      <span class="phase-badge" style="background:#EEEDFE;color:#534AB7;">Item 10</span>
+      <span class="chevron" id="chev9">&#9660;</span>
+    </div>
+    <div class="phase-body" id="body9">
+      <div class="step-card">
+        <div class="step-title">O que gravar no vídeo</div>
+        <div class="step-body">Você vai gravar sua tela mostrando o projeto e falar explicando. Não precisa aparecer. Mostre: o GitHub, a Dadosfera com os dados, o dashboard, o app no Streamlit. Explique o que você fez em cada parte.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Como gravar a tela</div>
+        <div class="step-body">No Windows: use o Xbox Game Bar (aperta Win+G, depois clique em gravar). Ou baixe o OBS Studio (gratuito) em obsproject.com. No Mac: use o QuickTime Player, Arquivo → Nova Gravação de Tela.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Como subir no YouTube</div>
+        <div class="step-body">Entre em <b>youtube.com</b>, clique no ícone de câmera (canto superior direito) → "Fazer upload de vídeo". Selecione o arquivo gravado. No campo "Visibilidade", escolha <b>"Não listado"</b> (não público, não privado — só quem tem o link vê). Copie o link gerado e cole no README.</div>
+      </div>
+    </div>
+
+    <!-- FASE 10 -->
+    <div class="phase-header" onclick="togglePhase(10)">
+      <div class="phase-num" style="background:#E1F5EE;color:#0F6E56;">10</div>
+      <div class="phase-title">Finalizar o README e entregar</div>
+      <span class="phase-badge" style="background:#E1F5EE;color:#0F6E56;">Entrega final</span>
+      <span class="chevron" id="chev10">&#9660;</span>
+    </div>
+    <div class="phase-body" id="body10">
+      <div class="step-card">
+        <div class="step-title">Atualizar o README com tudo</div>
+        <div class="step-body">No GitHub, clique no arquivo README.md, depois no ícone de lápis (editar). Cole os prints, coloque os links do app, do YouTube, da Dadosfera. Salve clicando em "Commit changes".</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Se deixar repositório privado: dar acesso</div>
+        <div class="step-body">No repositório, clique em "Settings" → "Collaborators" → "Add people". Adicione: allansene, Rafaelsantanaep, galvsoliveira, Guilherme-maioli, edvaldoazevedo.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-title">Conferir tudo antes de entregar</div>
+        <div class="step-body">Abra seu repositório no GitHub e confira: README tem prints? Tem links? O app do Streamlit abre? O vídeo do YouTube abre? Se sim — está pronto!</div>
+      </div>
+      <button onclick="sendPrompt('Me ajuda a finalizar e revisar meu README.md completo para o case da Dadosfera?')" style="margin-top:8px;font-size:13px;padding:7px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;">Revisar meu README agora ↗</button>
+    </div>
+
+  </div>
+
+  <div id="tab-checklist" class="tab-pane">
+    <div class="section-label">Setup inicial</div>
+    <div id="todos"></div>
+    <div style="margin-top:1.5rem;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:13px;color:var(--color-text-secondary);" id="todo-count">0 de 0 concluídos</span>
+      <button onclick="resetTodos()" style="font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;">Resetar</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const tasks = [
+  { text: "Criar conta Google", tag: "Setup", color: "#E1F5EE", tc: "#0F6E56" },
+  { text: "Criar conta GitHub", tag: "Setup", color: "#E1F5EE", tc: "#0F6E56" },
+  { text: "Criar conta Kaggle e baixar o kaggle.json", tag: "Setup", color: "#E1F5EE", tc: "#0F6E56" },
+  { text: "Entrar na Dadosfera pelo e-mail recebido", tag: "Setup", color: "#E1F5EE", tc: "#0F6E56" },
+  { text: "Criar conta no Streamlit Community Cloud", tag: "Setup", color: "#E1F5EE", tc: "#0F6E56" },
+  { text: "Criar repositório no GitHub com nome correto (NOME_SOBRENOME_DDF_TECH_042026)", tag: "GitHub", color: "#E6F1FB", tc: "#185FA5" },
+  { text: "Criar fluxograma de planejamento (no Canva ou aqui) — Item 0", tag: "Item 0", color: "#FAEEDA", tc: "#854F0B" },
+  { text: "Adicionar imagem do fluxograma no GitHub", tag: "Item 0", color: "#FAEEDA", tc: "#854F0B" },
+  { text: "Baixar dataset Olist do Kaggle — Item 1", tag: "Item 1", color: "#EEEDFE", tc: "#534AB7" },
+  { text: "Abrir Google Colab e criar notebook novo", tag: "Item 2", color: "#FAECE7", tc: "#993C1D" },
+  { text: "Subir arquivos CSV do dataset no Colab", tag: "Item 2", color: "#FAECE7", tc: "#993C1D" },
+  { text: "Rodar código para carregar e visualizar os dados (df.head())", tag: "Item 2", color: "#FAECE7", tc: "#993C1D" },
+  { text: "Subir dados na plataforma Dadosfera (mais de 100k linhas)", tag: "Item 2", color: "#FAECE7", tc: "#993C1D" },
+  { text: "Tirar print dos dados carregados na Dadosfera", tag: "Item 2", color: "#FAECE7", tc: "#993C1D" },
+  { text: "Criar dicionário de dados (tabela explicando cada coluna) — Item 3", tag: "Item 3", color: "#E1F5EE", tc: "#0F6E56" },
+  { text: "Rodar análise de qualidade dos dados no Colab — Item 4", tag: "Item 4", color: "#E1F5EE", tc: "#0F6E56" },
+  { text: "Tirar print do relatório de qualidade", tag: "Item 4", color: "#E1F5EE", tc: "#0F6E56" },
+  { text: "Criar dashboard com 5 gráficos na Dadosfera — Item 7", tag: "Item 7", color: "#E6F1FB", tc: "#185FA5" },
+  { text: "Salvar query SQL usada nos gráficos", tag: "Item 7", color: "#E6F1FB", tc: "#185FA5" },
+  { text: "Tirar print dos 5 gráficos", tag: "Item 7", color: "#E6F1FB", tc: "#185FA5" },
+  { text: "Criar arquivo app.py no GitHub para o Streamlit — Item 9", tag: "Item 9", color: "#FAEEDA", tc: "#854F0B" },
+  { text: "Criar arquivo requirements.txt no GitHub", tag: "Item 9", color: "#FAEEDA", tc: "#854F0B" },
+  { text: "Publicar app no Streamlit Community Cloud e copiar o link", tag: "Item 9", color: "#FAEEDA", tc: "#854F0B" },
+  { text: "Gravar vídeo apresentando o projeto", tag: "Item 10", color: "#EEEDFE", tc: "#534AB7" },
+  { text: "Subir vídeo no YouTube como 'Não listado' e copiar o link", tag: "Item 10", color: "#EEEDFE", tc: "#534AB7" },
+  { text: "Atualizar README com todos os prints, links e descrições", tag: "Entrega", color: "#E1F5EE", tc: "#0F6E56" },
+  { text: "Conferir se README está completo e links funcionam", tag: "Entrega", color: "#E1F5EE", tc: "#0F6E56" },
+];
+
+let done = JSON.parse(localStorage.getItem('case_todos') || '[]');
+
+function saveDone() {
+  try { localStorage.setItem('case_todos', JSON.stringify(done)); } catch(e) {}
+}
+
+function renderTodos() {
+  const el = document.getElementById('todos');
+  el.innerHTML = '';
+  tasks.forEach((t, i) => {
+    const isDone = done.includes(i);
+    const row = document.createElement('div');
+    row.className = 'todo-row';
+    row.innerHTML = `
+      <div class="todo-check ${isDone ? 'done' : ''}" onclick="toggleTodo(${i})"></div>
+      <div class="todo-text ${isDone ? 'done-text' : ''}" style="flex:1">${t.text}</div>
+      <span class="todo-tag" style="background:${t.color};color:${t.tc}">${t.tag}</span>
+    `;
+    el.appendChild(row);
+  });
+  const c = document.getElementById('todo-count');
+  if(c) c.textContent = `${done.length} de ${tasks.length} concluídos`;
+}
+
+function toggleTodo(i) {
+  if(done.includes(i)) done = done.filter(x => x !== i);
+  else done.push(i);
+  saveDone();
+  renderTodos();
+}
+
+function resetTodos() { done = []; saveDone(); renderTodos(); }
+
+renderTodos();
+
+let openPhases = 0;
+function togglePhase(n) {
+  const body = document.getElementById('body' + n);
+  const chev = document.getElementById('chev' + n);
+  if(!body) return;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  chev.style.transform = isOpen ? '' : 'rotate(180deg)';
+  openPhases += isOpen ? -1 : 1;
+  if(openPhases < 0) openPhases = 0;
+  const fill = document.getElementById('prog-fill');
+  const label = document.getElementById('prog-label');
+  if(fill) fill.style.width = Math.min(100, Math.round(openPhases/11*100)) + '%';
+  if(label) label.textContent = openPhases + ' de 10 etapas abertas';
+}
+
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + t).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
