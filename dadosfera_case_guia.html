@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia Completo — Dadosfera Case Técnico</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --gold: #f59e0b;
+    --green: #10b981;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --border: rgba(59,130,246,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lora', Georgia, serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  header {
+    padding: 80px 40px 60px;
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .eyebrow::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent2);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 800;
+    line-height: 1.05;
+    color: #fff;
+    margin-bottom: 24px;
+  }
+
+  h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-desc {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 580px;
+    font-style: italic;
+  }
+
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-obrig { background: var(--accent); }
+  .dot-bonus { background: var(--gold); }
+  .dot-tip   { background: var(--green); }
+  .dot-warn  { background: var(--red); }
+
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+  }
+
+  /* Phase divider */
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 60px 0 28px;
+  }
+
+  .phase-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .phase-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+  }
+
+  /* Step card */
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .step:hover {
+    border-color: rgba(59,130,246,0.35);
+    transform: translateY(-2px);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 28px 32px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .step-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.25);
+    border-radius: 8px;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+  }
+
+  .step-num.bonus { color: var(--gold); background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.25); }
+
+  .step-title-block { flex: 1; }
+
+  .step-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: inline-block;
+  }
+  .tag-obrig  { background: rgba(59,130,246,0.15); color: var(--accent); }
+  .tag-bonus  { background: rgba(245,158,11,0.15); color: var(--gold); }
+  .tag-setup  { background: rgba(139,92,246,0.15); color: var(--purple); }
+  .tag-avali  { background: rgba(16,185,129,0.15); color: var(--green); }
+
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.3;
+  }
+
+  .step-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .step-toggle {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 18px;
+    color: var(--muted);
+    flex-shrink: 0;
+    margin-top: 8px;
+    transition: transform 0.3s;
+  }
+
+  .step.open .step-toggle { transform: rotate(45deg); }
+
+  .step-body {
+    display: none;
+    padding: 0 32px 32px;
+    border-top: 1px solid var(--border);
+    margin: 0 32px;
+    padding-top: 24px;
+  }
+
+  .step.open .step-body { display: block; }
+
+  .step-body ol, .step-body ul {
+    padding-left: 20px;
+    margin-bottom: 16px;
+  }
+
+  .step-body li {
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #cbd5e1;
+  }
+
+  .step-body li strong {
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+  }
+
+  .step-body p {
+    font-size: 15px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+  }
+
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: rgba(59,130,246,0.06);
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+    font-size: 14px;
+    color: #93c5fd;
+  }
+
+  .callout.warn { border-color: var(--red); background: rgba(239,68,68,0.06); color: #fca5a5; }
+  .callout.tip  { border-color: var(--green); background: rgba(16,185,129,0.06); color: #6ee7b7; }
+  .callout.gold { border-color: var(--gold); background: rgba(245,158,11,0.06); color: #fcd34d; }
+
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: var(--accent2);
+  }
+
+  pre {
+    background: #0d1117;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    margin: 16px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #a5f3fc;
+  }
+
+  .deliverable-box {
+    background: var(--surface2);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 20px;
+  }
+
+  .deliverable-box h4 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .deliverable-box ul { padding-left: 16px; }
+  .deliverable-box li { font-size: 13px; color: #94a3b8; margin-bottom: 6px; }
+
+  /* Summary scoreboard */
+  .scoreboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 40px 0;
+  }
+
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .score-card .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .score-card .value {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  .score-card .desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    max-width: 960px;
+    margin: 0 auto;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Guia de Execução — Dadosfera v2.2</div>
+  <h1>Case Técnico<br><span>Passo a Passo Completo</span></h1>
+  <p class="header-desc">Um roteiro detalhado para executar o case da Dadosfera do zero à entrega final, com estratégias para cada item e bônus.</p>
+
+  <div class="legend">
+    <div class="legend-item"><div class="dot dot-obrig"></div> Obrigatório</div>
+    <div class="legend-item"><div class="dot dot-bonus"></div> Bônus</div>
+    <div class="legend-item"><div class="dot dot-tip"></div> Dica de execução</div>
+    <div class="legend-item"><div class="dot dot-warn"></div> Atenção / Risco</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Scoreboard -->
+  <div class="scoreboard">
+    <div class="score-card">
+      <div class="label">Nível Mínimo</div>
+      <div class="value" style="color:var(--muted)">Itens</div>
+      <div class="desc">2, 3, 4, 7 + GitHub</div>
+    </div>
+    <div class="score-card">
+      <div class="label">Intermediário</div>
+      <div class="value" style="color:var(--accent)">+Vídeo</div>
+      <div class="desc">Apresentação Item 10</div>
+    </div>
+    <div class="score-card">
+      <div class="label">Avançado</div>
+      <div class="value" style="color:var(--purple)">+App</div>
+      <div class="desc">Data App (Item 9)</div>
+    </div>
+    <div class="score-card">
+      <div class="label">Excelente</div>
+      <div class="value" style="color:var(--gold)">+Bônus</div>
+      <div class="desc">Case Bônus GenAI</div>
+    </div>
+    <div class="score-card">
+      <div class="label">Outlier</div>
+      <div class="value" style="color:var(--green)">∞</div>
+      <div class="desc">Extrapolar o pedido</div>
+    </div>
+  </div>
+
+  <!-- FASE 0: SETUP -->
+  <div class="phase-header">
+    <div class="phase-label">Fase 0 — Preparação</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step open" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num">00</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-setup">Setup</div>
+        <div class="step-title">Configuração do Ambiente & Repositório</div>
+        <div class="step-subtitle">Antes de começar qualquer item do case</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>Antes de qualquer coisa, configure seu ambiente. Erros de setup no meio do case custam tempo precioso.</p>
+      <ol>
+        <li><strong>Crie o repositório GitHub</strong> com o nome exato: <code>NOME_SOBRENOME_DDF_TECH_MMAAAA</code><br>Exemplo: <code>JOAO_SILVA_DDF_TECH_042026</code></li>
+        <li><strong>Acesse a Dadosfera</strong> com o e-mail da vaga. Busque no Gmail por <code>from:suporte@dadosfera.ai</code> ou assunto <em>"Acesse a Dadosfera | Registro"</em>. Faça o primeiro acesso pelo link do e-mail.</li>
+        <li><strong>Abra o Google Colab</strong> e crie um notebook principal. Você o usará nos itens 5, 8 e 9.</li>
+        <li><strong>Crie a estrutura do repositório</strong> já:
+          <pre>
+README.md
+/item_0_planejamento/
+/item_1_base_dados/
+/item_2_integrar/
+/item_3_explorar/
+/item_4_data_quality/
+/item_5_llm_features/
+/item_6_modelagem/
+/item_7_analise/
+/item_8_pipeline/
+/item_9_data_app/
+/item_10_apresentacao/</pre>
+        </li>
+        <li><strong>Configure colaboradores no repositório privado</strong> (se preferir privacidade): <code>allansene</code>, <code>Rafaelsantanaep</code>, <code>galvsoliveira</code>, <code>Guilherme-maioli</code>, <code>edvaldoazevedo</code>.</li>
+      </ol>
+      <div class="callout tip">💡 Documente tudo no README.md desde o início. Cada item deve ter: descrição, link para asset na Dadosfera e print de evidência.</div>
+    </div>
+  </div>
+
+  <!-- FASE 1: PLANEJAMENTO -->
+  <div class="phase-header">
+    <div class="phase-label">Fase 1 — Planejamento (Item 0)</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num">01</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-obrig">Obrigatório</div>
+        <div class="step-title">Item 0 — Artefato de Planejamento (PMBOK)</div>
+        <div class="step-subtitle">Gantt chart, Kanban, Fluxograma ou Checklist</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>Demonstra que você sabe planejar um projeto de dados como profissional. O avaliador está verificando maturidade em gestão.</p>
+      <ol>
+        <li><strong>Escolha a ferramenta:</strong> Notion (Kanban) ou Miro/FigJam (diagrama visual) são as opções mais rápidas. Para um Gantt bonito, use <em>app.diagrams.net</em> (draw.io) de graça.</li>
+        <li><strong>Monte as fases do projeto:</strong>
+          <ul>
+            <li>Fase 1: Definição da base de dados e setup (Dia 1–2)</li>
+            <li>Fase 2: Integração na Dadosfera (Dia 2–3)</li>
+            <li>Fase 3: Catalogação e Data Quality (Dia 3–4)</li>
+            <li>Fase 4: Feature Engineering com LLM (Dia 4–5)</li>
+            <li>Fase 5: Modelagem e Análise/Dashboard (Dia 5–7)</li>
+            <li>Fase 6: Pipeline + Data App (Dia 7–9)</li>
+            <li>Fase 7: Apresentação em vídeo (Dia 9–10)</li>
+          </ul>
+        </li>
+        <li><strong>Para nível avançado:</strong> Adicione coluna de Riscos (ex: "base de dados muito grande para upload"), coluna de Responsável e coluna de Custo estimado (ex: custo de API da OpenAI).</li>
+        <li><strong>Exporte como imagem PNG</strong> e coloque na pasta <code>/item_0_planejamento/</code> e no README.</li>
+      </ol>
+      <div class="callout gold">⭐ Bônus: Coloque interdependências entre tarefas (ex: Item 7 depende do Item 5) e destaque o caminho crítico em vermelho.</div>
+      <div class="deliverable-box">
+        <h4>Entregáveis</h4>
+        <ul>
+          <li>Imagem do artefato de planejamento no repositório</li>
+          <li>Link ou embed no README.md</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 2: BASE DE DADOS -->
+  <div class="phase-header">
+    <div class="phase-label">Fase 2 — Base de Dados (Item 1)</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num">02</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-obrig">Obrigatório</div>
+        <div class="step-title">Item 1 — Escolha e Preparação da Base de Dados</div>
+        <div class="step-subtitle">Mínimo 100.000 registros — sem isso o case não é avaliado</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>A base deve ter contexto de e-commerce. As três sugestões seguras do case são:</p>
+      <ul>
+        <li><strong>NYC Taxi Data</strong> — dados de corridas de táxi (volume enorme, série temporal rica). Disponível no <a href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page" target="_blank" style="color:var(--accent2)">site oficial da NYC</a> e no BigQuery público.</li>
+        <li><strong>Microsoft AdventureWorks</strong> — banco de dados de uma empresa fictícia de vendas. Bom para modelagem dimensional (Kimball).</li>
+        <li><strong>Base de Produtos com Descrições (Amazon)</strong> — ideal para o Item 5 (LLM Features). Disponível no <a href="https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023" target="_blank" style="color:var(--accent2)">Hugging Face</a>. ~3GB, perfeito para o case.</li>
+      </ul>
+      <div class="callout warn">⚠️ CRÍTICO: Base com menos de 100.000 registros = case não avaliado. Verifique o volume ANTES de começar a integrar.</div>
+      <ol>
+        <li><strong>Recomendação estratégica:</strong> Use a <em>Base de Produtos Amazon</em> pois ela se encaixa em TODOS os itens: e-commerce (Item 2), texto desestruturado para LLM (Item 5), categorias para análise (Item 7).</li>
+        <li><strong>Download:</strong> Baixe via Python no Colab:
+          <pre>
+from datasets import load_dataset
+ds = load_dataset("McAuley-Lab/Amazon-Reviews-2023", 
+                  "raw_meta_Electronics", 
+                  trust_remote_code=True)
+df = ds['full'].to_pandas()
+print(len(df))  # verificar >100k</pre>
+        </li>
+        <li><strong>Alternativa com dados sintéticos:</strong> Se preferir controle total, gere com Faker em Python:
+          <pre>
+import pandas as pd
+from faker import Faker
+import random
+fake = Faker('pt_BR')
+
+records = []
+for i in range(150000):
+    records.append({
+        'order_id': fake.uuid4(),
+        'product_name': fake.bs(),
+        'category': random.choice(['Eletrônicos','Roupas','Casa','Esporte']),
+        'price': round(random.uniform(10, 5000), 2),
+        'qty': random.randint(1, 10),
+        'order_date': fake.date_between('-2y','today'),
+        'customer_id': fake.uuid4(),
+        'description': fake.paragraph(nb_sentences=5)
+    })
+df = pd.DataFrame(records)
+df.to_csv('ecommerce_orders.csv', index=False)</pre>
+        </li>
+        <li><strong>Documente a escolha</strong> no README: por que essa base, o que ela representa, quantos registros, quais colunas principais.</li>
+      </ol>
+      <div class="deliverable-box">
+        <h4>Entregáveis</h4>
+        <ul>
+          <li>Script de geração/download dos dados no repositório</li>
+          <li>Descrição da base no README (contexto de negócio, volume, colunas)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 3: INTEGRAR -->
+  <div class="phase-header">
+    <div class="phase-label">Fase 3 — Integrar (Item 2.1)</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num">03</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-obrig">Obrigatório</div>
+        <div class="step-title">Item 2.1 — Carregamento na Dadosfera</div>
+        <div class="step-subtitle">Módulo de Coleta — conectar e carregar os dados</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>Aqui você usa a plataforma Dadosfera para ingerir os dados. É uma ação prática dentro da ferramenta.</p>
+      <ol>
+        <li><strong>Acesse o módulo de Coleta</strong> na Dadosfera (menu lateral).</li>
+        <li><strong>Crie uma nova conexão:</strong>
+          <ul>
+            <li>Se sua base é um CSV local → use o conector de Upload de Arquivo</li>
+            <li>Se for um banco SQL → use o conector adequado (PostgreSQL, MySQL etc.)</li>
+            <li>Se for do BigQuery (ex: NYC Taxi) → use o conector Google BigQuery</li>
+          </ul>
+        </li>
+        <li><strong>Configure o pipeline de coleta:</strong> defina nome do dataset, frequência (para o case pode ser "única vez"), schema e destino (Landing Zone).</li>
+        <li><strong>Execute a carga e valide</strong> que 100k+ registros foram carregados. Tire print da tela de confirmação.</li>
+        <li><strong>Anote o ID do dataset</strong> na Dadosfera — você vai precisar dele no Item 7 (Visualização).</li>
+      </ol>
+      <div class="callout gold">⭐ Bônus: Carregue os dados primeiro em um banco transacional SQL (ex: PostgreSQL local ou Supabase free tier), depois importe via Dadosfera e aplique uma Microtransformação (ex: normalizar texto, converter tipos de data).</div>
+      <div class="deliverable-box">
+        <h4>Entregáveis</h4>
+        <ul>
+          <li>Print da carga concluída na Dadosfera com contagem de registros</li>
+          <li>Link para o dataset na Dadosfera no README</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 4: EXPLORAR/CATALOGAR -->
+  <div class="phase-header">
+    <div class="phase-label">Fase 4 — Explorar (Item 3)</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num">04</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-obrig">Obrigatório</div>
+        <div class="step-title">Item 3 — Catalogação e Organização no Data Lake</div>
+        <div class="step-subtitle">Dicionário de dados + organização por zonas</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>Demonstra conhecimento de Data Governance. O avaliador verifica se você entende as zonas de um Data Lake (Landing → Standardized → Curated).</p>
+      <ol>
+        <li><strong>No módulo de Catálogo da Dadosfera</strong>, localize o dataset carregado.</li>
+        <li><strong>Preencha os metadados:</strong>
+          <ul>
+            <li>Nome do dataset com convenção clara (ex: <code>lnd_ecommerce_orders_raw</code>)</li>
+            <li>Descrição de negócio do dataset</li>
+            <li>Para cada coluna: tipo de dado, descrição, exemplos, se é PII (dado pessoal)</li>
+            <li>Tags: <code>ecommerce</code>, <code>orders</code>, <code>raw</code>, etc.</li>
+          </ul>
+        </li>
+        <li><strong>Organize nas zonas do Data Lake:</strong>
+          <ul>
+            <li><strong>Landing Zone:</strong> dados brutos como vieram da fonte</li>
+            <li><strong>Standardized Zone:</strong> dados com tipos corretos, nomes padronizados, deduplicados</li>
+            <li><strong>Curated Zone:</strong> dados prontos para análise/modelo (tabelas dimensionais, agregações)</li>
+          </ul>
+        </li>
+        <li><strong>Documente o dicionário de dados</strong> em Markdown no repositório, com tabela: <code>| Coluna | Tipo | Descrição | Exemplo | PII? |</code></li>
+      </ol>
+      <div class="callout gold">⭐ Bônus: Use a API REST da Dadosfera para catalogar os assets automaticamente via script Python, em vez de fazer manualmente na interface.</div>
+      <div class="deliverable-box">
+        <h4>Entregáveis</h4>
+        <ul>
+          <li>Print da tela de catalogação na Dadosfera</li>
+          <li>Link para o asset no catálogo</li>
+          <li>Dicionário de dados em Markdown no repositório</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 5: DATA QUALITY -->
+  <div class="phase-header">
+    <div class="phase-label">Fase 5 — Data Quality (Item 4)</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num">05</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-obrig">Obrigatório</div>
+        <div class="step-title">Item 4 — Relatório de Qualidade dos Dados</div>
+        <div class="step-subtitle">great-expectations ou soda-core no Google Colab</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>Avalia conhecimento de Data Quality — uma das etapas mais valorizadas em projetos reais de dados.</p>
+      <ol>
+        <li><strong>No Google Colab, instale a biblioteca:</strong>
+          <pre>
+# Opção 1: Great Expectations (mais visual)
+!pip install great_expectations
+
+# Opção 2: Soda Core (mais simples para iniciantes)
+!pip install soda-core soda-core-pandas</pre>
+        </li>
+        <li><strong>Com Great Expectations</strong> — exemplo de implementação:
+          <pre>
+import great_expectations as gx
+import pandas as pd
+
+df = pd.read_csv('seu_dataset.csv')
+context = gx.get_context()
+
+# Criar expectativas
+validator = context.sources.pandas_default\
+    .read_dataframe(df)
+
+# Exemplos de validações
+validator.expect_column_values_to_not_be_null("order_id")
+validator.expect_column_values_to_be_between(
+    "price", min_value=0, max_value=100000
+)
+validator.expect_column_values_to_be_in_set(
+    "category", ["Eletrônicos","Roupas","Casa","Esporte"]
+)
+validator.expect_column_values_to_match_regex(
+    "order_date", r"\d{4}-\d{2}-\d{2}"
+)
+
+results = validator.validate()
+print(results)</pre>
+        </li>
+        <li><strong>Gere o relatório HTML</strong> e salve no repositório.</li>
+        <li><strong>Descreva os problemas encontrados</strong> em Markdown: % de nulos por coluna, outliers, inconsistências de formato, duplicatas.</li>
+        <li><strong>Proponha e implemente as correções</strong> (ex: preencher nulos com mediana, remover duplicatas, padronizar datas).</li>
+      </ol>
+      <div class="callout gold">⭐ Bônus: Crie um Common Data Model — um schema JSON ou SQL DDL que define os campos, tipos, constraints e regras de negócio da entidade "Order" / "Product".</div>
+      <div class="deliverable-box">
+        <h4>Entregáveis</h4>
+        <ul>
+          <li>Notebook Colab com o relatório de qualidade</li>
+          <li>Relatório HTML exportado no repositório</li>
+          <li>Markdown com análise dos problemas encontrados e ações tomadas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 6: LLM FEATURES -->
+  <div class="phase-header">
+    <div class="phase-label">Fase 6 — Processar com LLM (Item 5)</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num">06</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-obrig">Obrigatório</div>
+        <div class="step-title">Item 5 — Feature Engineering com GenAI/LLMs</div>
+        <div class="step-subtitle">Transformar texto desestruturado em features estruturadas</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>Este é o item mais diferencial do case — demonstra capacidade de usar IA para gerar valor a partir de dados não estruturados.</p>
+      <ol>
+        <li><strong>Pegue a coluna de descrição/texto</strong> do seu dataset (ex: <code>description</code> ou <code>product_title</code>).</li>
+        <li><strong>No Colab, instale e configure a OpenAI:</strong>
+          <pre>
+!pip install openai
+from openai import OpenAI
+client = OpenAI(api_key="sua_chave_api")</pre>
+        </li>
+        <li><strong>Crie a função de extração de features:</strong>
+          <pre>
+def extract_features(title, description):
+    prompt = f"""
+Analise o produto abaixo e retorne um JSON com:
+- category: categoria principal
+- subcategory: subcategoria
+- material: material principal (se mencionado)
+- key_features: lista de até 5 características
+- target_audience: público-alvo
+- price_segment: budget/mid/premium
+- sentiment: positivo/neutro/negativo
+
+Título: {title}
+Descrição: {description[:500]}
+
+Retorne SOMENTE o JSON, sem explicações.
+"""
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",  # mais barato
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"}
+    )
+    return response.choices[0].message.content
+
+# Aplicar em amostra do dataset (ex: 1000 linhas)
+import json
+df_sample = df.head(1000).copy()
+df_sample['llm_features'] = df_sample.apply(
+    lambda r: extract_features(r['title'], r['description']), 
+    axis=1
+)</pre>
+        </li>
+        <li><strong>Expanda o JSON em colunas</strong> do DataFrame para análise posterior.</li>
+        <li><strong>Carregue o dataset enriquecido de volta</strong> na Dadosfera como nova tabela (Curated Zone).</li>
+      </ol>
+      <div class="callout warn">⚠️ Custo: GPT-4o-mini custa ~$0.15/1M tokens. Para 1000 descrições de ~200 tokens cada = ~$0.03. Viável. Para o dataset completo de 100k, use batch ou processe só uma amostra representativa.</div>
+      <div class="callout gold">⭐ Bônus: Use um vídeo ou áudio como input — ex: transcreva um vídeo de produto com Whisper e extraia features do texto transcrito.</div>
+      <div class="deliverable-box">
+        <h4>Entregáveis</h4>
+        <ul>
+          <li>Notebook Colab com código completo</li>
+          <li>Dataset enriquecido carregado na Dadosfera</li>
+          <li>Print mostrando as novas colunas geradas pelo LLM</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 7: MODELAGEM -->
+  <div class="phase-header">
+    <div class="phase-label">Fase 7 — Modelagem (Item 6)</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num">07</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-obrig">Obrigatório</div>
+        <div class="step-title">Item 6 — Modelagem Dimensional de Dados</div>
+        <div class="step-subtitle">Kimball (Star Schema) com 2 visões finais</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>Demonstra conhecimento de Data Warehouse. Kimball (Star Schema) é o padrão mais reconhecido e o mais fácil de justificar para e-commerce.</p>
+      <ol>
+        <li><strong>Escolha e justifique o modelo:</strong> Kimball Star Schema é ideal para e-commerce por permitir análise rápida por dimensões (produto, cliente, tempo, categoria).</li>
+        <li><strong>Projete o Star Schema:</strong>
+          <ul>
+            <li><strong>Fato:</strong> <code>fact_orders</code> — order_id, date_key, product_key, customer_key, quantity, price, revenue</li>
+            <li><strong>Dim_Produto:</strong> product_key, name, category, subcategory, material (vindo do LLM)</li>
+            <li><strong>Dim_Cliente:</strong> customer_key, segment, region, signup_date</li>
+            <li><strong>Dim_Tempo:</strong> date_key, year, quarter, month, week, day_of_week</li>
+            <li><strong>Dim_Categoria:</strong> category_key, name, parent_category (das features do LLM)</li>
+          </ul>
+        </li>
+        <li><strong>Crie o diagrama</strong> no draw.io (diagrams.net) ou dbdiagram.io. Exporte como PNG.</li>
+        <li><strong>Implemente em SQL</strong> (pode ser no Colab com SQLite ou DuckDB):
+          <pre>
+import duckdb
+conn = duckdb.connect()
+
+conn.execute("""
+CREATE TABLE dim_produto AS 
+SELECT 
+  ROW_NUMBER() OVER() as product_key,
+  product_id, title as name,
+  category, subcategory, material
+FROM products_enriched
+""")
+
+conn.execute("""
+CREATE TABLE fact_orders AS
+SELECT 
+  o.order_id,
+  d.product_key,
+  CAST(o.order_date AS DATE) as order_date,
+  o.quantity,
+  o.price,
+  o.quantity * o.price as revenue
+FROM orders o
+JOIN dim_produto d ON o.product_id = d.product_id
+""")</pre>
+        </li>
+        <li><strong>Crie 2 views/visões finais</strong> prontas para análise:
+          <ul>
+            <li>View 1: Revenue por categoria e mês</li>
+            <li>View 2: Top produtos por volume de vendas</li>
+          </ul>
+        </li>
+      </ol>
+      <div class="callout gold">⭐ Bônus: Desenhe o diagrama completo mostrando Landing → Standardized → Curated, com as tabelas mapeadas em cada camada.</div>
+      <div class="deliverable-box">
+        <h4>Entregáveis</h4>
+        <ul>
+          <li>Diagrama do Star Schema (PNG no repositório)</li>
+          <li>DDL SQL das tabelas e views</li>
+          <li>Justificativa da escolha do modelo em Markdown</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 8: ANÁLISE/DASHBOARD -->
+  <div class="phase-header">
+    <div class="phase-label">Fase 8 — Analisar (Item 7)</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num">08</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-obrig">Obrigatório</div>
+        <div class="step-title">Item 7 — Dashboard de Análise na Dadosfera</div>
+        <div class="step-subtitle">Metabase integrado — 5 visualizações obrigatórias</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>Este é o item com maior peso visual. O avaliador verge diretamente o dashboard criado na Dadosfera.</p>
+      <ol>
+        <li><strong>Acesse o módulo de Visualização</strong> na Dadosfera (Metabase integrado).</li>
+        <li><strong>Localize sua tabela pelo ID</strong> (copiado no Item 2). No Metabase, use "Ask a Question" → "SQL" → selecione o dataset pelo ID.</li>
+        <li><strong>Crie uma Coleção</strong> com o nome: <code>Seu Nome - MM/AAAA</code> (ex: <code>João Silva - 04/2026</code>).</li>
+        <li><strong>Crie os 5 gráficos obrigatórios</strong> usando tipos diferentes:
+          <ul>
+            <li><strong>1. Série Temporal</strong> — Revenue total por mês (Line Chart)
+              <pre>SELECT DATE_TRUNC('month', order_date) as mes,
+       SUM(revenue) as total_revenue
+FROM fact_orders GROUP BY 1 ORDER BY 1</pre>
+            </li>
+            <li><strong>2. Análise de Categorias</strong> — Revenue por categoria (Bar Chart)
+              <pre>SELECT p.category, SUM(o.revenue) as total
+FROM fact_orders o JOIN dim_produto p 
+  ON o.product_key = p.product_key
+GROUP BY 1 ORDER BY 2 DESC</pre>
+            </li>
+            <li><strong>3. Distribuição</strong> — Distribuição de preços (Histogram ou Box Plot)</li>
+            <li><strong>4. Top N</strong> — Top 10 produtos mais vendidos (Table ou Horizontal Bar)</li>
+            <li><strong>5. Métrica única</strong> — KPI cards: Total de Pedidos, Revenue Total, Ticket Médio</li>
+          </ul>
+        </li>
+        <li><strong>Monte o Dashboard</strong> agrupando todos os gráficos.</li>
+        <li><strong>Salve as queries SQL</strong> de cada gráfico em arquivos <code>.sql</code> no repositório.</li>
+        <li><strong>Tire prints</strong> de cada visualização e do dashboard completo.</li>
+      </ol>
+      <div class="callout gold">⭐ Bônus 1: Configure alertas/notificações no Metabase (ex: alerta se revenue cair abaixo de X). Bônus 2: Use dados de Latitude/Longitude para criar mapa de calor por região. Bônus 3: Replique em PowerBI ou Tableau e incorpore na Dadosfera como ativo externo.</div>
+      <div class="deliverable-box">
+        <h4>Entregáveis</h4>
+        <ul>
+          <li>Link para a Coleção/Dashboard na Dadosfera</li>
+          <li>Arquivos .sql das queries no repositório</li>
+          <li>Prints das 5 visualizações no README</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 9: PIPELINE -->
+  <div class="phase-header">
+    <div class="phase-label">Fase 9 — Pipeline (Item 8)</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num">09</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-obrig">Obrigatório (Avançado)</div>
+        <div class="step-title">Item 8 — Pipeline de Dados na Dadosfera</div>
+        <div class="step-subtitle">Módulo de Inteligência — automatizar o fluxo de dados</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>Demonstra capacidade de criar fluxos automatizados — uma habilidade core de Engenharia de Dados.</p>
+      <ol>
+        <li><strong>Acesse o módulo de Inteligência</strong> da Dadosfera (pipelines/Steps).</li>
+        <li><strong>Crie um pipeline com ao menos 3 steps:</strong>
+          <ul>
+            <li><strong>Step 1 — Extração:</strong> ler dados da Landing Zone</li>
+            <li><strong>Step 2 — Transformação:</strong> limpeza (remover nulos, padronizar tipos), renomear colunas seguindo padrão</li>
+            <li><strong>Step 3 — Carga:</strong> escrever na Curated Zone</li>
+          </ul>
+        </li>
+        <li><strong>Use os Steps prontos do Stepsfera</strong> (repositório GitHub da Dadosfera) sempre que possível, em vez de criar do zero.</li>
+        <li><strong>Execute o pipeline e valide</strong> que os dados chegaram corretamente na camada destino.</li>
+        <li><strong>Catalogue o pipeline</strong> na Dadosfera com descrição, inputs, outputs e responsável.</li>
+      </ol>
+      <div class="callout gold">⭐ Bônus: Use DuckDB ou Spark para o step de transformação, mostrando capacidade de processar grandes volumes com performance.</div>
+      <div class="deliverable-box">
+        <h4>Entregáveis</h4>
+        <ul>
+          <li>Print do pipeline configurado na Dadosfera</li>
+          <li>Link para o pipeline catalogado</li>
+          <li>Print de execução bem-sucedida</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 10: DATA APP -->
+  <div class="phase-header">
+    <div class="phase-label">Fase 10 — Data App (Item 9)</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num">10</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-obrig">Obrigatório (Avançado)</div>
+        <div class="step-title">Item 9 — Data App com Streamlit</div>
+        <div class="step-subtitle">EDA interativa ou similaridade de produtos</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>Mostra capacidade de entregar valor para o usuário final com uma interface interativa, não apenas código no Colab.</p>
+      <ol>
+        <li><strong>Escolha o tipo de app</strong> (recomendação: EDA com GPT — mais impressionante e direto):
+          <ul>
+            <li><strong>Opção A — EDA com GPT:</strong> usuário faz perguntas em linguagem natural sobre os dados</li>
+            <li><strong>Opção B — Similaridade de Produtos:</strong> busca semântica por embeddings</li>
+            <li><strong>Opção C — Dashboard interativo:</strong> filtros dinâmicos sobre as análises do Item 7</li>
+          </ul>
+        </li>
+        <li><strong>Código base para EDA com GPT (Opção A):</strong>
+          <pre>
+import streamlit as st
+import pandas as pd
+from openai import OpenAI
+
+st.title("🛒 E-commerce Data Explorer")
+st.caption("Faça perguntas sobre os dados em linguagem natural")
+
+@st.cache_data
+def load_data():
+    return pd.read_csv("data/orders_clean.csv")
+
+df = load_data()
+st.dataframe(df.head(5))
+
+question = st.text_input("Sua pergunta:")
+if question and st.button("Analisar"):
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    
+    context = f"""
+    Você é um analista de dados. 
+    DataFrame com {len(df)} linhas e colunas: {list(df.columns)}
+    Amostra: {df.describe().to_string()}
+    
+    Responda: {question}
+    Se precisar de código Python/pandas, forneça.
+    """
+    
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": context}]
+    )
+    st.write(response.choices[0].message.content)</pre>
+        </li>
+        <li><strong>Publique no Streamlit Community Cloud:</strong>
+          <ul>
+            <li>Suba o código para o GitHub (pasta <code>/item_9_data_app/</code>)</li>
+            <li>Acesse <a href="https://share.streamlit.io" target="_blank" style="color:var(--accent2)">share.streamlit.io</a></li>
+            <li>Conecte o repositório e configure os secrets (API key)</li>
+            <li>Clique em Deploy</li>
+          </ul>
+        </li>
+        <li><strong>Documente no README</strong> como executar localmente: <code>pip install -r requirements.txt && streamlit run app.py</code></li>
+      </ol>
+      <div class="deliverable-box">
+        <h4>Entregáveis</h4>
+        <ul>
+          <li>Código do app no repositório (/item_9_data_app/)</li>
+          <li>Link do app publicado no Streamlit Cloud</li>
+          <li>README com instruções para rodar localmente</li>
+          <li>Print do app funcionando</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 11: APRESENTAÇÃO -->
+  <div class="phase-header">
+    <div class="phase-label">Fase 11 — Apresentação (Item 10)</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num">11</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-obrig">Obrigatório (Intermediário+)</div>
+        <div class="step-title">Item 10 — Apresentação em Vídeo</div>
+        <div class="step-subtitle">YouTube Unlisted — walking through todos os ativos</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>Apresente como um especialista de dados pitchando a Dadosfera para o cliente. Seja confiante, claro e mostre o valor entregue.</p>
+      <ol>
+        <li><strong>Estrutura sugerida do vídeo</strong> (15–25 min):
+          <ul>
+            <li><strong>[0–2 min]</strong> Apresentação: quem você é, qual o contexto do case</li>
+            <li><strong>[2–5 min]</strong> Problema do cliente: arquitetura atual (AWS Lambda→Kinesis→S3/Redis) e suas limitações</li>
+            <li><strong>[5–8 min]</strong> Solução proposta: diagrama substituindo a arquitetura pela Dadosfera</li>
+            <li><strong>[8–18 min]</strong> Walk-through dos ativos: mostrar na Dadosfera cada item criado</li>
+            <li><strong>[18–22 min]</strong> Demo ao vivo do Data App e Dashboard</li>
+            <li><strong>[22–25 min]</strong> Ganhos: custo menor, time-to-value, escalabilidade</li>
+          </ul>
+        </li>
+        <li><strong>Grave com OBS Studio</strong> (gratuito) fazendo screen recording com webcam.</li>
+        <li><strong>Suba no YouTube como Unlisted</strong> (não Privado — Unlisted permite acesso pelo link).</li>
+        <li><strong>Para o diagrama de substituição</strong>, use draw.io mostrando:
+          <ul>
+            <li>Fonte de dados → Dadosfera Coleta (substitui Lambda + Kinesis)</li>
+            <li>Dadosfera Processar (substitui Firehose + transformações custom)</li>
+            <li>Dadosfera Data Lake (substitui S3)</li>
+            <li>Dadosfera Visualização (substitui Redis + dashboards custom)</li>
+          </ul>
+        </li>
+        <li><strong>Argumento de valor:</strong> com Dadosfera, o cliente reduz de 5 serviços AWS gerenciados para 1 plataforma integrada, com catálogo, qualidade e IA nativas.</li>
+      </ol>
+      <div class="callout tip">💡 Dica: Prepare um slide deck simples (5–8 slides) no Google Slides para dar estrutura à apresentação. Não precisa ser elaborado — o conteúdo importa mais.</div>
+      <div class="deliverable-box">
+        <h4>Entregáveis</h4>
+        <ul>
+          <li>Link do vídeo YouTube (Unlisted) no README</li>
+          <li>Diagrama da solução com Dadosfera (PNG)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 12: BÔNUS -->
+  <div class="phase-header">
+    <div class="phase-label">Fase 12 — Bônus (Excelente/Outlier)</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num bonus">B1</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-bonus">Bônus</div>
+        <div class="step-title">Item Bônus — Gerador de Apresentação de Produto com DALL-E</div>
+        <div class="step-subtitle">GenAI + Data App — para nível Excelente</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>Combina o Data App do Item 9 com geração de imagens — mostra capacidade de criar aplicações GenAI completas.</p>
+      <ol>
+        <li><strong>Crie um Streamlit app</strong> que recebe o nome/descrição de um produto e gera:
+          <ul>
+            <li>Um pitch de vendas gerado por GPT</li>
+            <li>Uma imagem do produto gerada por DALL-E</li>
+            <li>Uma ficha técnica com as features extraídas no Item 5</li>
+          </ul>
+        </li>
+        <li><strong>Código base:</strong>
+          <pre>
+def generate_image(product_name, description):
+    response = client.images.generate(
+        model="dall-e-3",
+        prompt=f"Professional product photo of: {product_name}. {description[:200]}",
+        n=1,
+        size="1024x1024"
+    )
+    return response.data[0].url
+
+def generate_pitch(product_name, features):
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{
+            "role": "user",
+            "content": f"Crie um pitch de vendas para: {product_name}. Features: {features}"
+        }]
+    )
+    return response.choices[0].message.content</pre>
+        </li>
+        <li><strong>Documente os prompts utilizados</strong> em seção separada do notebook/README.</li>
+      </ol>
+      <div class="deliverable-box">
+        <h4>Entregáveis</h4>
+        <ul>
+          <li>Código do app bônus no repositório</li>
+          <li>Link do app publicado</li>
+          <li>Prompts documentados no README</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 13: ENTREGA FINAL -->
+  <div class="phase-header">
+    <div class="phase-label">Fase Final — Revisão & Entrega</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="step" onclick="toggleStep(this)">
+    <div class="step-header">
+      <div class="step-num">✓</div>
+      <div class="step-title-block">
+        <div class="step-tag tag-avali">Checklist</div>
+        <div class="step-title">Revisão Final e Entrega</div>
+        <div class="step-subtitle">Antes de submeter — verificar todos os requisitos</div>
+      </div>
+      <div class="step-toggle">+</div>
+    </div>
+    <div class="step-body">
+      <p>Verifique cada ponto antes de submeter. Itens técnicos perfeitos com documentação ruim prejudicam a avaliação.</p>
+      <ol>
+        <li><strong>Nome do repositório correto:</strong> <code>NOME_SOBRENOME_DDF_TECH_MMAAAA</code></li>
+        <li><strong>README.md completo</strong> com:
+          <ul>
+            <li>Índice linkando para cada item</li>
+            <li>Descrição da base de dados escolhida</li>
+            <li>Links para todos os ativos na Dadosfera</li>
+            <li>Prints de evidência de cada item</li>
+            <li>Instruções para rodar o Data App localmente</li>
+            <li>Link do vídeo YouTube</li>
+          </ul>
+        </li>
+        <li><strong>Verifique os links da Dadosfera:</strong> certifique-se que os links são acessíveis por qualquer pessoa com acesso à plataforma, não apenas por você.</li>
+        <li><strong>Vídeo YouTube:</strong> confirme que está como <em>Unlisted</em> (não Privado) e que qualquer pessoa com o link consegue assistir.</li>
+        <li><strong>Se repositório privado:</strong> confirme que todos os 5 usuários da Dadosfera foram adicionados como colaboradores.</li>
+        <li><strong>Revise o README</strong> uma última vez em modo de visualização do GitHub — veja se imagens carregam, links funcionam, código aparece formatado.</li>
+      </ol>
+      <div class="callout warn">⚠️ Análises não catalogadas na Dadosfera ou não reproduzíveis pelo repositório NÃO serão avaliadas — mesmo que você tenha feito o trabalho.</div>
+      <div class="callout tip">💡 Se sobrar tempo, adicione uma seção "Lições Aprendidas" ou "Próximos Passos" no README — demonstra maturidade profissional e visão estratégica.</div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Guia gerado para o Case Técnico Dadosfera v2.2 &nbsp;·&nbsp; Abril 2026
+</footer>
+
+<script>
+  function toggleStep(el) {
+    el.classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>
