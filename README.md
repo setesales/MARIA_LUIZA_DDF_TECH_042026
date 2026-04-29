@@ -1,4 +1,4 @@
-# MARIA_LUIZA_DDF_TECH_042026
+# MARIA_SALES_DDF_TECH_042026
 README.md
 /item_0_planejamento/
 /item_1_base_dados/
